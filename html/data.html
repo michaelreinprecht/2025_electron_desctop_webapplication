@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ESP32 Sensor Monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="../js/render/data-renderer.js"></script>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+        }
+
+        #log {
+            white-space: pre;
+            background: #eee;
+            padding: 10px;
+            border-radius: 6px;
+            height: 150px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ESP32 Sensor Dashboard</h1>
+
+    <button id="serialConnect">Start Serial</button>
+    <button id="serialDisconnect">Stop Serial</button>
+
+    <button id="udpStart">Start UDP</button>
+    <button id="udpStop">Stop UDP</button>
+
+    <h2>Live Temperature</h2>
+    <canvas id="tempChart" width="600" height="300"></canvas>
+
+    <h2>Live Humidity</h2>
+    <canvas id="humChart" width="600" height="300"></canvas>
+
+    <h2>Raw Log</h2>
+    <div id="log"></div>
+
+</body>
+
+</html>
