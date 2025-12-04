@@ -3,11 +3,15 @@ const { ReadlineParser } = require("@serialport/parser-readline");
 
 let port, parser, mainWindowRef;
 
-function connectSerial(mainWindow) {
+function connectSerial(mainWindow, portPath) {
     mainWindowRef = mainWindow;
 
-    // TODO make serial port configureable
-    port = new SerialPort({ path: "COM3", baudRate: 115200 });
+    if (!portPath) {
+        console.error("No COM port specified!");
+        return;
+    }
+
+    port = new SerialPort({ path: portPath, baudRate: 115200 });
     parser = port.pipe(new ReadlineParser({ delimiter: "\n" }));
 
     parser.on("data", (data) => {
@@ -26,8 +30,19 @@ function connectSerial(mainWindow) {
     });
 }
 
+
 function disconnectSerial() {
     if (port && port.isOpen) port.close();
 }
 
-module.exports = { connectSerial, disconnectSerial };
+async function listSerialPorts() {
+    try {
+        const ports = await SerialPort.list();
+        return ports.map(p => p.path);
+    } catch (err) {
+        console.error("Error listing ports:", err);
+        return [];
+    }
+}
+
+module.exports = { connectSerial, disconnectSerial, listSerialPorts };

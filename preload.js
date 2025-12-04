@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("serialAPI", {
     connect: () => ipcRenderer.send("serial-connect"),
     disconnect: () => ipcRenderer.send("serial-disconnect"),
+    listPorts: () => ipcRenderer.invoke("serial-list-ports"),
 });
 
 contextBridge.exposeInMainWorld("udpAPI", {

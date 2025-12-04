@@ -1,4 +1,5 @@
 // UI refs
+const portSelect = document.getElementById("portSelect");
 const logBox = document.getElementById("log");
 const serialConnectBtn = document.getElementById("serialConnect");
 const serialDisconnectBtn = document.getElementById("serialDisconnect");
@@ -6,13 +7,34 @@ const udpStartBtn = document.getElementById("udpStart");
 const udpStopBtn = document.getElementById("udpStop");
 
 // Bind buttons to APIs
-serialConnectBtn.onclick = () => window.serialAPI.connect();
+serialConnectBtn.onclick = () => {
+    const selectedPort = portSelect.value;
+    if (selectedPort) {
+        window.serialAPI.connect(selectedPort);
+    }
+};
 serialDisconnectBtn.onclick = () => window.serialAPI.disconnect();
 
 udpStartBtn.onclick = () => window.udpAPI.start();
 udpStopBtn.onclick = () => window.udpAPI.stop();
 
-// --- Setup Charts ---
+// Display available ports
+async function refreshPorts() {
+    const ports = await window.serialAPI.listPorts();
+    portSelect.innerHTML = "";
+    ports.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p;
+        opt.textContent = p;
+        portSelect.appendChild(opt);
+    });
+}
+// Start inverval for refreshing com ports (every 2 seconds ...)
+setInterval(refreshPorts, 2000);
+// Initial refresh
+refreshPorts();
+
+// Setup Charts
 const tempChart = new Chart(document.getElementById("tempChart"), {
     type: "line",
     data: {
