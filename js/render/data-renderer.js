@@ -1,6 +1,4 @@
-import { createChart, updateChartAppearance, charts } from "./chart-manager.js";
-
-const MAX_POINTS = 50;
+import { createChart, addPoint, charts } from "./chart-manager.js";
 
 // UI refs
 const portSelect = document.getElementById("portSelect");
@@ -57,17 +55,6 @@ window.dataAPI.onData((data) => {
         }
 
         // Add point to chart
-        const chart = charts[key];
-        const t = new Date().toLocaleTimeString();
-
-        chart.data.labels.push(t);
-        chart.data.datasets[0].data.push(value);
-
-        if (chart.data.labels.length > MAX_POINTS) {
-            chart.data.labels.shift();
-            chart.data.datasets[0].data.shift();
-        }
-
-        chart.update();
+        addPoint(key, value);
     });
 });
