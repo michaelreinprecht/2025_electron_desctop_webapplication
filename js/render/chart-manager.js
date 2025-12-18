@@ -152,9 +152,47 @@ function addPoint(key, value) {
     chart.update();
 }
 
+function createChartsFromImportedDatapoints(importedDatapoints) {
+    //Clear existing data
+    for (const key in datapoints) {
+        datapoints[key].length = 0;
+
+        if (charts[key]) {
+            charts[key].data.labels.length = 0;
+            charts[key].data.datasets[0].data.length = 0;
+            charts[key].update();
+        }
+    }
+
+    //Create missing charts
+    for (const key in importedDatapoints) {
+        if (!charts[key]) {
+            createChart(key, key, key);
+        }
+    }
+
+    //Restore datapoints
+    for (const key in importedDatapoints) {
+        const chart = charts[key];
+        const points = importedDatapoints[key];
+
+        for (const point of points) {
+            chart.data.labels.push(point.time);
+            chart.data.datasets[0].data.push(point.value);
+            datapoints[key].push(point);
+        }
+
+        chart.update();
+    }
+}
+
 function getDatapointsForChart(key) {
     return datapoints[key] || [];
 }
 
+function getAllDatapoints() {
+    return datapoints;
+}
 
-export { createChart, addPoint, charts, datapoints, getDatapointsForChart };
+
+export { createChart, addPoint, charts, datapoints, createChartsFromImportedDatapoints, getDatapointsForChart, getAllDatapoints };

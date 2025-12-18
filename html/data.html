@@ -6,6 +6,7 @@
     <title>ESP32 Sensor Monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../js/render/data-renderer.js"></script>
+    <script type="module" src="../js/main/csv-main.js"></script>
 
     <style>
         body {
@@ -36,6 +37,10 @@
 
     <button id="udpStart">Start UDP</button>
     <button id="udpStop">Stop UDP</button>
+
+    <button id="csvExport">Export CSV</button>
+    <button id="csvImport">Import CSV</button>
+    <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
 
     <h2>Sensor Charts</h2>
     <div id="chartsContainer"></div>
