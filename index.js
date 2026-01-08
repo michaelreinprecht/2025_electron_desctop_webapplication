@@ -20,7 +20,8 @@ const createWindow = () => {
         icon: path.join(__dirname, "images/icon-512.png")
     });
 
-    mainWindow.loadFile('./html/index.html');
+    mainWindow.loadFile('./html/data.html');
+    mainWindow.maximize();
 }
 
 app.on('window-all-closed', () => {

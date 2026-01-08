@@ -1,53 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <title>ESP32 Sensor Monitor</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="../js/render/data-renderer.js"></script>
     <script type="module" src="../js/main/csv-main.js"></script>
 
-    <style>
-        body {
-            font-family: Arial;
-            padding: 20px;
-        }
-
-        #log {
-            white-space: pre;
-            background: #eee;
-            padding: 10px;
-            border-radius: 6px;
-            height: 150px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/style.css" />
 </head>
 
 <body>
-    <h1>ESP32 Sensor Dashboard</h1>
-    <select id="portSelect">
-        <option value="" disabled selected>Select a COM Port...</option>
-    </select>
+    <div class="app">
 
-    <button id="serialConnect">Start Serial</button>
-    <button id="serialDisconnect">Stop Serial</button>
+        <header class="header">
+            <h1>ESP32 Sensor Monitor</h1>
+            <span class="subtitle">Serial & UDP Sensor Monitoring</span>
+        </header>
 
-    <button id="udpStart">Start UDP</button>
-    <button id="udpStop">Stop UDP</button>
+        <div class="card toolbar">
+            <div class="group">
+                <label>Serial Port</label>
+                <select id="portSelect">
+                    <option value="" disabled selected>Select a COM Port...</option>
+                </select>
+            </div>
 
-    <button id="csvExport">Export CSV ...</button>
-    <button id="csvImport">Import CSV ...</button>
-    <input type="file" id="csvFileInput" accept=".csv" style="display:none" />
+            <div class="group">
+                <button class="primary" id="serialConnect">Start Serial</button>
+                <button class="danger" id="serialDisconnect">Stop Serial</button>
+            </div>
 
-    <h2>Sensor Charts</h2>
-    <div id="chartsContainer"></div>
+            <div class="group">
+                <button class="primary" id="udpStart">Start UDP</button>
+                <button class="danger" id="udpStop">Stop UDP</button>
+            </div>
 
-    <h2>Raw Log</h2>
-    <div id="log"></div>
+            <div class="group">
+                <button id="csvExport">Export CSV...</button>
+                <button id="csvImport">Import CSV...</button>
+                <input type="file" id="csvFileInput" accept=".csv" hidden />
+            </div>
+        </div>
 
+        <div class="card">
+            <h2>Sensor Charts</h2>
+            <div id="chartsContainer" class="charts"></div>
+        </div>
+
+        <div class="card">
+            <h2>Raw Log</h2>
+            <pre id="log"></pre>
+        </div>
+
+    </div>
 </body>
 
 </html>

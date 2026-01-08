@@ -1,0 +1,115 @@
+/* RESET */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6fb;
+    color: #1e1e2f;
+}
+
+/* APP LAYOUT */
+.app {
+    max-width: 1200px;
+    margin: auto;
+    padding: 24px;
+}
+
+/* HEADER */
+.header {
+    margin-bottom: 24px;
+}
+
+.header h1 {
+    margin: 0;
+    color: #030874;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #666;
+}
+
+/* CARD */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    margin-bottom: 24px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* TOOLBAR */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.group label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #030874;
+}
+
+/* FORM ELEMENTS */
+select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #cfd3ff;
+    min-width: 200px;
+}
+
+/* BUTTONS */
+button {
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    background: #e6e9ff;
+    color: #030874;
+}
+
+button.primary {
+    background: #030874;
+    color: white;
+}
+
+button.danger {
+    background: #e74c3c;
+    color: white;
+}
+
+button:disabled {
+    opacity: 0
+}
+
+#log {
+    font-family: monospace;
+    font-size: 13px;
+    background: #0f1224;
+    color: #cfd3ff;
+    padding: 12px;
+    border-radius: 8px;
+
+    height: 200px;        /* fixed height */
+    overflow-y: auto;     /* scrollbar appears when content exceeds height */
+    white-space: pre;     /* preserve line breaks */
+    margin: 0;            /* remove default <pre> margin */
+}
