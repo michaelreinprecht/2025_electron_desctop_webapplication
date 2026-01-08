@@ -1,11 +1,13 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const { connectSerial, disconnectSerial, listSerialPorts } = require("./js/main/serial-main.js");
 const { startUdp, stopUdp } = require("./js/main/udp-main.js");
+const path = require("path");
 
 let mainWindow;
 
 const createWindow = () => {
     mainWindow = new BrowserWindow({
+        title: "FlexGraph",
         width: 800,
         height: 600,
         webPreferences: {
@@ -13,7 +15,8 @@ const createWindow = () => {
             nodeIntegration: false,
             contextIsolation: true,
             sandbox: false,
-        }
+        },
+        icon: path.join(__dirname, "images/icon-512.png")
     });
 
     mainWindow.loadFile('./html/index.html');
