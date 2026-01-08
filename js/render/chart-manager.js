@@ -128,7 +128,7 @@ function createChart(key, label = key, yLabel = key) {
     };
 
     ["label-input", "axis-input", "maxpoints-input", "color-input", "ymin-input", "ymax-input"].forEach(idSuffix => {
-        document.getElementById(`${key}-${idSuffix}`).addEventListener("input", updateSettings);
+        document.getElementById(`${key}-${idSuffix}`).addEventListener("change", updateSettings);
     });
 }
 
