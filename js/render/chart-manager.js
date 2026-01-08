@@ -14,8 +14,19 @@ function hexToRGBA(hex, alpha = 1) {
     return `rgba(${r},${g},${b},${alpha})`;
 }
 
-function createChart(key, label = key, yLabel = key) {
+async function createChart(key, label = key, yLabel = key) {
     const container = document.getElementById("chartsContainer");
+
+    const saved = await window.storeAPI.get(`charts.${key}`, {});
+
+    const settings = {
+        label: saved.label ?? label,
+        yLabel: saved.yLabel ?? yLabel,
+        maxPoints: saved.maxPoints ?? DEFAULT_MAX_POINTS,
+        color: saved.color ?? DEFAULT_COLOR,
+        yMin: saved.yMin ?? null,
+        yMax: saved.yMax ?? null
+    };
 
     const wrapper = document.createElement("div");
     wrapper.className = "chart-block";
@@ -35,7 +46,7 @@ function createChart(key, label = key, yLabel = key) {
 
     const title = document.createElement("h3");
     title.id = `${key}-title`;
-    title.textContent = label;
+    title.textContent = settings.label;
     chartContainer.appendChild(title);
 
     const canvas = document.createElement("canvas");
@@ -46,31 +57,31 @@ function createChart(key, label = key, yLabel = key) {
     wrapper.appendChild(chartContainer);
 
     // Settings panel
-    const settings = document.createElement("div");
-    settings.style.display = "flex";
-    settings.style.flexDirection = "column";
-    settings.style.gap = "8px";
+    const settingsPanel = document.createElement("div");
+    settingsPanel.style.display = "flex";
+    settingsPanel.style.flexDirection = "column";
+    settingsPanel.style.gap = "8px";
 
-    settings.innerHTML = `
+    settingsPanel.innerHTML = `
         <label>Label:</label>
-        <input type="text" id="${key}-label-input" placeholder="${label}" style="width:120px;" />
+        <input type="text" id="${key}-label-input" placeholder="${settings.label}" style="width:120px;" />
 
         <label>Y-Axis:</label>
-        <input type="text" id="${key}-axis-input" placeholder="${yLabel}" style="width:60px;" />
+        <input type="text" id="${key}-axis-input" placeholder="${settings.yLabel}" style="width:60px;" />
 
         <label>Max Points:</label>
-        <input type="number" id="${key}-maxpoints-input" min="1" value="${DEFAULT_MAX_POINTS}" style="width:60px;" />
+        <input type="number" id="${key}-maxpoints-input" min="1" value="${settings.maxPoints}" style="width:60px;" />
 
         <label>Line Color:</label>
-        <input type="color" id="${key}-color-input" value="${DEFAULT_COLOR}" style="width:60px;" />
+        <input type="color" id="${key}-color-input" value="${settings.color}" style="width:60px;" />
 
         <label>Y Min:</label>
-        <input type="number" step="any" id="${key}-ymin-input" placeholder="auto" style="width:60px;" />
+        <input type="number" step="any" id="${key}-ymin-input" placeholder="auto" style="width:60px;" value="${settings.yMin ?? ""}" />
 
         <label>Y Max:</label>
-        <input type="number" step="any" id="${key}-ymax-input" placeholder="auto" style="width:60px;" />
+        <input type="number" step="any" id="${key}-ymax-input" placeholder="auto" style="width:60px;" value="${settings.yMax ?? ""}" />
     `;
-    wrapper.appendChild(settings);
+    wrapper.appendChild(settingsPanel);
     container.appendChild(wrapper);
 
     const chart = new Chart(canvas, {
@@ -78,18 +89,29 @@ function createChart(key, label = key, yLabel = key) {
         data: {
             labels: [],
             datasets: [{
-                label: yLabel,
+                title: settings.label,
+                label: settings.yLabel,
                 data: [],
                 borderWidth: 2,
+                borderColor: settings.color,
+                backgroundColor: hexToRGBA(settings.color, 0.2),
+                pointBackgroundColor: settings.color,
+                pointBorderColor: settings.color
             }]
         },
         options: {
             animation: false,
+            scales: {
+                y: {
+                    min: settings.yMin,
+                    max: settings.yMax
+                }
+            }
         }
     });
 
     charts[key] = chart;
-    chartSettings[key] = { maxPoints: DEFAULT_MAX_POINTS };
+    chartSettings[key] = { maxPoints: settings.maxPoints };
     datapoints[key] = []; // initialize full history
 
     // Live settings update
@@ -99,11 +121,13 @@ function createChart(key, label = key, yLabel = key) {
         const newAxis = document.getElementById(`${key}-axis-input`).value || yLabel;
         const newMaxPoints = parseInt(document.getElementById(`${key}-maxpoints-input`).value) || DEFAULT_MAX_POINTS;
         const newColor = document.getElementById(`${key}-color-input`).value || DEFAULT_COLOR;
-        const yminVal = document.getElementById(`${key}-ymin-input`).value;
-        const ymaxVal = document.getElementById(`${key}-ymax-input`).value;
+        const yminRaw = document.getElementById(`${key}-ymin-input`).value;
+        const ymaxRaw = document.getElementById(`${key}-ymax-input`).value;
+        const newYMin = yminRaw === "" ? null : parseFloat(yminRaw);
+        const newYMax = ymaxRaw === "" ? null : parseFloat(ymaxRaw);
 
         //Set label
-        document.getElementById(`${key}-title`).textContent = newLabel;
+        title.textContent = newLabel;
         chart.data.datasets[0].label = newAxis;
 
         //Set maxpoints
@@ -121,10 +145,19 @@ function createChart(key, label = key, yLabel = key) {
         chart.data.datasets[0].pointBorderColor = newColor;
 
         // Set min/max scaling
-        chart.options.scales.y.min = yminVal === "" ? null : parseFloat(yminVal);
-        chart.options.scales.y.max = ymaxVal === "" ? null : parseFloat(ymaxVal);
+        chart.options.scales.y.min = newYMin;
+        chart.options.scales.y.max = newYMax;
 
         chart.update();
+
+        window.storeAPI.set(`charts.${key}`, {
+            label: newLabel,
+            yLabel: newAxis,
+            maxPoints: newMaxPoints,
+            color: newColor,
+            newYMin,
+            newYMax
+        });
     };
 
     ["label-input", "axis-input", "maxpoints-input", "color-input", "ymin-input", "ymax-input"].forEach(idSuffix => {
@@ -194,5 +227,15 @@ function getAllDatapoints() {
     return datapoints;
 }
 
+function buildChartKey(type, source = null) {
+    return source ? `${type}@${source}` : type;
+}
 
-export { createChart, addPoint, charts, datapoints, createChartsFromImportedDatapoints, getDatapointsForChart, getAllDatapoints };
+async function restoreChartsFromSettings() {
+    const saved = await window.storeAPI.get("charts", {});
+    for (const key of Object.keys(saved)) {
+        createChart(key, saved[key].label ?? key, saved[key].yLabel ?? key);
+    }
+}
+
+export { createChart, restoreChartsFromSettings, buildChartKey, addPoint, charts, datapoints, createChartsFromImportedDatapoints, getDatapointsForChart, getAllDatapoints };

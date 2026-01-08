@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require('electron')
 const { connectSerial, disconnectSerial, listSerialPorts } = require("./js/main/serial-main.js");
 const { startUdp, stopUdp } = require("./js/main/udp-main.js");
 const path = require("path");
+const store = require('./js/main/store-main.js');
 
 let mainWindow;
 
@@ -36,7 +37,11 @@ ipcMain.handle("serial-list-ports", async () => {
 ipcMain.on("udp-start", () => startUdp(mainWindow));
 ipcMain.on("udp-stop", () => stopUdp());
 
-// ### Startup application ###
+ipcMain.handle("store-get", (event, key, def) => store.get(key, def));
+ipcMain.on("store-set", (event, key, value) => store.set(key, value));
+ipcMain.on("store-delete", (event, key) => store.delete(key));
+
+// Startup application
 app.whenReady().then(() => {
     createWindow();
 

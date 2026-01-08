@@ -1,4 +1,4 @@
-import { createChart, addPoint, charts } from "./chart-manager.js";
+import { createChart, addPoint, charts, buildChartKey } from "./chart-manager.js";
 
 // UI refs
 const portSelect = document.getElementById("portSelect");
@@ -42,16 +42,19 @@ function log(msg) {
     logBox.scrollTop = logBox.scrollHeight;
 }
 
-// --- Unified Data Listener ---
+// Listen to all incoming sensor data ...
 window.dataAPI.onData((data) => {
     log(`[${data.source}] ${JSON.stringify(data)}`);
 
-    Object.entries(data).forEach(([key, value]) => {
+    Object.entries(data).forEach(([type, value]) => {
         if (typeof value !== "number") return;  // Filter out non-number values -> not supported
+
+        const key = buildChartKey(type);
+        // const key = buildChartKey(key, data.source);
 
         // Create new chart if needed
         if (!charts[key]) {
-            createChart(key, key, key);
+            createChart(key, type, type);
         }
 
         // Add point to chart

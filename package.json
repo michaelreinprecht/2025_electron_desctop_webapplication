@@ -37,7 +37,7 @@
     "define-data-property": "^1.1.4",
     "define-properties": "^1.2.1",
     "detect-node": "^2.1.0",
-    "electron-store": "^11.0.2",
+    "electron-store": "^7.0.3",
     "end-of-stream": "^1.4.5",
     "env-paths": "^2.2.1",
     "es-define-property": "^1.0.1",
