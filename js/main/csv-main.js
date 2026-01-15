@@ -18,8 +18,8 @@ fileInput.addEventListener("change", () => {
 
     const reader = new FileReader();
 
-    reader.onload = () => {
-        importCSV(reader.result);
+    reader.onload = async () => {
+        await importCSV(reader.result);
     };
 
     reader.readAsText(file);
@@ -51,7 +51,7 @@ function exportCSV() {
     URL.revokeObjectURL(url);
 }
 
-function importCSV(csvText) {
+async function importCSV(csvText) {
     const lines = csvText.trim().split("\n");
     lines.shift(); // remove header
 
@@ -68,5 +68,5 @@ function importCSV(csvText) {
         });
     }
 
-    createChartsFromImportedDatapoints(importedDatapoints);
+    await createChartsFromImportedDatapoints(importedDatapoints);
 }

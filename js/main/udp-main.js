@@ -10,18 +10,20 @@ function startUdp(mainWindow) {
 
     socket = dgram.createSocket("udp4");
 
-    socket.on("message", (msg) => {
+    socket.on("message", (msg, rinfo) => {
         const text = msg.toString();
         try {
             const parsed = JSON.parse(text);
             mainWindowRef.webContents.send("sensor-data", {
                 source: "udp",
+                sentBy: rinfo.address,
                 ...parsed
             });
         } catch {
             mainWindowRef.webContents.send("sensor-data", {
                 source: "udp",
-                raw: text
+                sentBy: rinfo.address,
+                raw: text === undefined ? "data undefined" : text
             });
         }
     });

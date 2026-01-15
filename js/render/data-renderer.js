@@ -46,15 +46,15 @@ function log(msg) {
 window.dataAPI.onData((data) => {
     log(`[${data.source}] ${JSON.stringify(data)}`);
 
-    Object.entries(data).forEach(([type, value]) => {
+    Object.entries(data).forEach(async ([type, value]) => {
         if (typeof value !== "number") return;  // Filter out non-number values -> not supported
 
-        const key = buildChartKey(type);
-        // const key = buildChartKey(key, data.source);
+        //const key = buildChartKey(type);
+        const key = buildChartKey(type, data.sentBy);
 
         // Create new chart if needed
         if (!charts[key]) {
-            createChart(key, type, type);
+            await createChart(key, type, type);
         }
 
         // Add point to chart

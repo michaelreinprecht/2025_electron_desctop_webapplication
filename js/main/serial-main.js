@@ -19,11 +19,13 @@ function connectSerial(mainWindow, portPath) {
             const parsed = JSON.parse(data);
             mainWindowRef.webContents.send("sensor-data", {
                 source: "serial",
+                sentBy: portPath,
                 ...parsed
             });
-        } catch {
+        } catch (err) {
             mainWindowRef.webContents.send("sensor-data", {
                 source: "serial",
+                sentBy: portPath,
                 raw: data
             });
         }

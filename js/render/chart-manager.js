@@ -185,7 +185,7 @@ function addPoint(key, value) {
     chart.update();
 }
 
-function createChartsFromImportedDatapoints(importedDatapoints) {
+async function createChartsFromImportedDatapoints(importedDatapoints) {
     //Clear existing data
     for (const key in datapoints) {
         datapoints[key].length = 0;
@@ -200,7 +200,7 @@ function createChartsFromImportedDatapoints(importedDatapoints) {
     //Create missing charts
     for (const key in importedDatapoints) {
         if (!charts[key]) {
-            createChart(key, key, key);
+            await createChart(key, key, key);
         }
     }
 
@@ -227,14 +227,14 @@ function getAllDatapoints() {
     return datapoints;
 }
 
-function buildChartKey(type, source = null) {
-    return source ? `${type}@${source}` : type;
+function buildChartKey(type, sentBy = null) {
+    return sentBy ? `${type}@${sentBy}` : type;
 }
 
 async function restoreChartsFromSettings() {
     const saved = await window.storeAPI.get("charts", {});
     for (const key of Object.keys(saved)) {
-        createChart(key, saved[key].label ?? key, saved[key].yLabel ?? key);
+        await createChart(key, saved[key].label ?? key, saved[key].yLabel ?? key);
     }
 }
 
